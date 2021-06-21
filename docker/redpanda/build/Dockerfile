@@ -1,7 +1,7 @@
 FROM ubuntu:20.10
 
 RUN apt-get update
-RUN apt-get install -y git wget emacs golang-go docker.io emacs
+RUN apt-get install -y git wget emacs golang-go docker.io emacs g++-11 build-essential
 
 COPY setup.sh setup.sh
 RUN ./setup.sh
