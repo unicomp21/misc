@@ -1,5 +1,6 @@
 FROM ubuntu:20.10
 
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
 RUN apt-get install -y git wget emacs golang-go docker.io emacs g++-11 build-essential
 
