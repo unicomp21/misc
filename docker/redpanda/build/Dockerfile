@@ -1,59 +1,14 @@
-FROM ubuntu:focal
-
-LABEL maintainer="Jan Kelemen" \
-      description="C++ build environment" \
-      version="0.1.0"
+FROM ubuntu:20.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt update -y
+RUN apt-get update
+RUN apt-get install -y software-properties-common git emacs
+RUN add-apt-repository 'deb http://mirrors.kernel.org/ubuntu hirsute main universe'
+RUN apt-get update
+RUN apt-get install -y gcc-11 g++-11
 
-# Add machine prerequisites
-RUN apt install -y --no-install-recommends \ 
-    # For add-apt-repository
-    software-properties-common \ 
-    # For wget
-    wget \
-    # For gpg-agent
-    gpg-agent \
-    # For make
-    build-essential
-
-# Add apt sources
-RUN add-apt-repository ppa:ubuntu-toolchain-r/test
-RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add
-RUN add-apt-repository 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-12 main'
-
-RUN apt-get update -y
-
-# Install prerequisites
-RUN apt install -y --no-install-recommends \
-    git \
-    ssh \
-    # Prerequisites for conan
-    python3 \
-    python3-pip \
-    python3-setuptools
-
-# Install compilers
-RUN apt install -y --no-install-recommends \
-    gcc-11 g++-11 \
-    clang-12
-
-# Install build tools
-RUN apt install -y --no-install-recommends \
-    cmake \
-    clang-format-12 clang-tidy-12
-
-# Cleanup the packages to reduce the size of the image
-RUN apt autoclean && \ 
-    apt autoremove && \
-    apt clean
-
-RUN rm -rf /var/lib/apt/lists/
-
-# Install conan
-RUN pip3 install conan
-
-COPY setup.sh setup.sh
-RUN ./setup.sh
+WORKDIR /tmp
+RUN git clone https://github.com/vectorizedio/redpanda.git
+WORKDIR /tmp/redpanda
+RUN ./install-dependencies.sh && CC=gcc-11 CXX=g++-11 ./build.sh
