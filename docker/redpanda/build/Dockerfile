@@ -9,9 +9,10 @@ RUN apt-get update
 RUN apt-get install -y software-properties-common git emacs ccache
 RUN add-apt-repository 'deb http://mirrors.kernel.org/ubuntu hirsute main universe'
 RUN apt-get update
-RUN apt-get install -y gcc-11 g++-11
+#RUN apt-get install -y gcc-11 g++-11
+RUN apt-get install -y clang-tools-12
 
 WORKDIR /tmp
 RUN git clone https://github.com/vectorizedio/redpanda.git
 WORKDIR /tmp/redpanda
-RUN ./install-dependencies.sh && CC=gcc-11 CXX=g++-11 ./build.sh
+RUN ./install-dependencies.sh && CC=clang-12 CXX=clang++-12 ./build.sh
